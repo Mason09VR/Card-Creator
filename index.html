@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Clash Royale Card Categorizer</title>
+
+<style>
+:root {
+    --bg: #0b1623;
+    --panel: #16263f;
+    --slot: #0e1b2d;
+    --accent: #1e90ff;
+    --used: #1f4d32;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: radial-gradient(circle at top, #13294b, var(--bg));
+    color: white;
+    text-align: center;
+    padding: 30px 15px;
+}
+
+h1 {
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+#randomBox {
+    background: linear-gradient(135deg, #1e90ff, #3aa0ff);
+    border-radius: 14px;
+    padding: 18px 28px;
+    display: inline-block;
+    min-width: 280px;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 15px 0;
+    box-shadow: 0 8px 20px rgba(0,0,0,.35);
+}
+
+button {
+    padding: 12px 22px;
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform .1s, background .2s;
+}
+
+button:hover {
+    background: #1876cc;
+    transform: scale(1.05);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 18px;
+    max-width: 1200px;
+    margin: 35px auto 0;
+}
+
+.category {
+    background: var(--panel);
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: 0 6px 14px rgba(0,0,0,.3);
+}
+
+.category h3 {
+    margin: 0 0 12px;
+    font-size: 16px;
+    letter-spacing: .5px;
+    opacity: .9;
+}
+
+.slot {
+    background: var(--slot);
+    border: 2px dashed #3b5a88;
+    border-radius: 10px;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 15px;
+    padding: 8px;
+    transition: all .2s;
+}
+
+.slot:hover {
+    border-color: var(--accent);
+}
+
+.slot.used {
+    border: 2px solid #4caf50;
+    background: var(--used);
+    cursor: default;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Clash Royale Card Categorizer</h1>
+
+<div id="randomBox">Click Randomize</div><br>
+<button onclick="randomizeCard()">Randomize Card</button>
+
+<div class="grid">
+    <div class="category"><h3>Range</h3><div class="slot" onclick="placeCard(this)"></div></div>
+    <div class="category"><h3>HP</h3><div class="slot" onclick="placeCard(this)"></div></div>
+    <div class="category"><h3>Elixir Cost</h3><div class="slot" onclick="placeCard(this)"></div></div>
+    <div class="category"><h3>Evo</h3><div class="slot" onclick="placeCard(this)"></div></div>
+    <div class="category"><h3>Hit Speed</h3><div class="slot" onclick="placeCard(this)"></div></div>
+    <div class="category"><h3># of Troops</h3><div class="slot" onclick="placeCard(this)"></div></div>
+    <div class="category"><h3>Speed</h3><div class="slot" onclick="placeCard(this)"></div></div>
+    <div class="category"><h3>Damage</h3><div class="slot" onclick="placeCard(this)"></div></div>
+    <div class="category"><h3>Ability</h3><div class="slot" onclick="placeCard(this)"></div></div>
+    <div class="category"><h3>Weight</h3><div class="slot" onclick="placeCard(this)"></div></div>
+</div>
+
+<script>
+const cards = [
+  // TROOPS
+  "Knight","Archers","Goblins","Spear Goblins","Giant","P.E.K.K.A","Minions","Balloon",
+  "Witch","Barbarians","Golem","Skeletons","Valkyrie","Bomber","Musketeer","Baby Dragon",
+  "Prince","Wizard","Mini P.E.K.K.A","Giant Skeleton","Hog Rider","Minion Horde",
+  "Ice Wizard","Royal Giant","Guards","Princess","Dark Prince","Three Musketeers",
+  "Lava Hound","Ice Spirit","Fire Spirit","Electro Wizard","Elite Barbarians","Hunter",
+  "Executioner","Bandit","Royal Recruits","Night Witch","Bats","Royal Ghost","Ram Rider",
+  "Zappies","Rascals","Cannon Cart","Mega Knight","Skeleton Barrel","Flying Machine",
+  "Wall Breakers","Royal Hogs","Goblin Giant","Fisherman","Magic Archer","Electro Dragon",
+  "Firecracker","Mighty Miner","Elixir Golem","Battle Healer","Skeleton Dragons",
+  "Mother Witch","Electro Spirit","Electro Giant","Phoenix",
+
+  // CHAMPIONS
+  "Archer Queen","Golden Knight","Skeleton King","Monk","Little Prince",
+
+  // SPELLS
+  "Arrows","Fireball","Rocket","Goblin Barrel","Freeze","Mirror","Lightning","Zap",
+  "Poison","Graveyard","The Log","Tornado","Clone","Earthquake","Barbarian Barrel",
+  "Heal Spirit","Rage","Giant Snowball","Royal Delivery",
+
+  // BUILDINGS
+  "Cannon","Goblin Hut","Mortar","Inferno Tower","Bomb Tower","Barbarian Hut",
+  "Tesla","X-Bow","Furnace","Goblin Cage","Tombstone","Elixir Collector"
+];
+
+let available = [...cards];
+let current = null;
+
+function randomizeCard() {
+    if (available.length === 0) {
+        randomBox.innerText = "No cards left!";
+        current = null;
+        return;
+    }
+    current = available[Math.floor(Math.random() * available.length)];
+    randomBox.innerText = current;
+}
+
+function placeCard(slot) {
+    if (!current || slot.classList.contains("used")) return;
+
+    slot.innerText = current;
+    slot.classList.add("used");
+    available = available.filter(c => c !== current);
+    current = null;
+    randomBox.innerText = "Click Randomize";
+}
+</script>
+
+</body>
+</html>
